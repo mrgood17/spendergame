@@ -2,1043 +2,223 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Little Spender - Game</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Little Spender - Pembuka</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Mango AC', 'Segoe UI', Roboto, sans-serif;
-            user-select: none;
         }
         body {
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 0;
-            transition: background-image 0.2s ease;
-            overflow: hidden;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
-        .game-container {
-            width: 100%;
-            max-width: 1100px;
-            height: 100vh;
-            max-height: 800px;
-            position: relative;
-            padding: 20px;
-            background: transparent;
-            overflow: hidden;
-        }
-        .screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-            gap: 15px;
-            overflow-y: auto;
-        }
-        .screen.active { display: flex; }
-        #menuScreen { background: transparent; }
-        #belanjaScreen {
-            background-color: #f3e1c2;
-            border-radius: 60px;
-            border: 6px solid #a56b3c;
-            box-shadow: 0 20px 30px rgba(0,0,0,0.6), inset 0 0 15px #ffeeaa;
-            overflow-y: auto;
-        }
-        #grinderScreen {
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            position: relative;
-            overflow: hidden;
-        }
-        .new-player-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            border: 2px solid #ffd966;
-            color: #ffd966;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
-            z-index: 10;
-        }
-        .new-player-btn:hover { background: rgba(0,0,0,0.8); transform: scale(1.05); }
-        .welcome-message {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #ffd966;
-            text-shadow: 3px 3px 0 #9b6226;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .menu-card {
-            width: 80%;
-            max-width: 400px;
-            background: #ffffff;
-            border: 4px solid #a56b3c;
-            border-radius: 60px;
-            padding: 20px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            margin: 15px 0;
-        }
-        .menu-card:hover { transform: scale(1.02); background: #fff8e7; border-color: #c47a44; }
-        .menu-card:active { transform: scale(0.98); }
-        .menu-icon-img {
-            width: 60px;
-            height: auto;
-            display: block;
-            animation: bounce 1s infinite ease-in-out;
-            object-fit: contain;
-        }
-        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-        .menu-text { font-size: 2rem; font-weight: bold; color: #3b2a17; text-shadow: 1px 1px 0 #ebc47f; }
-        #levelChoice {
-            background: #ffffff;
-            border: 4px solid #a56b3c;
-            border-radius: 60px;
-            padding: 25px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        h1, h2, h3 { color: #3b2a17; text-shadow: 2px 2px 0 #ebc47f; }
-        .btn-custom {
-            background: #fdd28c;
-            border: 4px solid #9b6226;
-            border-radius: 50px;
-            color: #2d1f0f;
-            font-weight: bold;
-            font-size: 1.3rem;
-            padding: 12px 30px;
-            box-shadow: 0 6px 0 #7b4d27, 0 10px 15px rgba(0,0,0,0.3);
-            transition: 0.05s linear;
-            margin: 5px;
-        }
-        .btn-custom:active { transform: translateY(6px); box-shadow: 0 0 0 #7b4d27; }
-        .btn-custom:hover { background: #fdd28c; color: #2d1f0f; }
-        .money-box, .timer-box, .stats-item {
-            background: rgba(30,95,58,0.85);
-            backdrop-filter: blur(4px);
-            border: 3px solid #d9a413;
-            border-radius: 50px;
-            padding: 8px 20px;
-            font-weight: bold;
-            text-align: center;
-            color: #ffd966;
-            text-shadow: 1px 1px 0 #1a3a24;
-        }
-        .timer-box { background: rgba(31,59,44,0.85); }
-        .stats-item {
-            background: rgba(95,61,34,0.85);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1.2rem;
-            color: white;
-        }
-        .stats-item img { width: 30px; height: 30px; object-fit: contain; }
-        .stats-item span:last-child { font-size: 1.4rem; font-weight: bold; min-width: 50px; color: #ffd966; }
-        .game-stats-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .left-stats, .right-stats { display: flex; gap: 15px; flex-wrap: wrap; }
-        .left-stats { justify-content: flex-start; }
-        .right-stats { justify-content: flex-end; }
-        .money-box, .timer-box { font-size: 1.8rem; padding: 8px 25px; color: #ffd966; }
-        .game-play-area {
-            position: relative;
-            width: 100%;
-            flex: 1;
-            min-height: 300px;
-            background: transparent;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        .object {
-            position: absolute;
-            width: 90px;
-            height: 90px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            cursor: pointer;
-            filter: drop-shadow(3px 5px 3px #00000060);
-            transition: transform 0.1s;
-        }
-        .object:hover { transform: scale(1.1); }
-        .grass { background-image: url('asset/du_rumput.png'); }
-        .bottle { background-image: url('asset/du_botol.png'); }
-        .coin-animation {
-            position: absolute;
-            font-weight: bold;
-            color: #ffd966;
-            text-shadow: 2px 2px 0 #000;
-            font-size: 1.5rem;
-            pointer-events: none;
-            animation: floatUp 0.8s forwards;
-            z-index: 100;
-        }
-        @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-50px)} }
-        
-        .shop-layout {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            flex: 1;
-            min-height: 0;
-        }
-        .product-grid {
-            flex: 2;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            overflow-y: auto;
-            padding-right: 10px;
-            max-height: 100%;
-        }
-        .cart-panel {
-            flex: 1;
-            background: #fff0d0;
-            border-radius: 40px;
-            border: 4px solid #a56b3c;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            max-height: 100%;
-            overflow-y: auto;
-        }
-        .cart-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #3b2a17;
-            text-align: center;
-            background: #dbb88c;
-            border-radius: 40px;
-            padding: 8px;
-        }
-        .cart-items {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .cart-item {
-            background: #fffae6;
-            border-radius: 30px;
-            padding: 8px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            border: 1px solid #b57c48;
-        }
-        .cart-item-name { font-weight: bold; color: #2d1f0f; }
-        .cart-item-price { color: #1f8b4c; font-weight: bold; }
-        .cart-empty { text-align: center; color: #7b4d27; padding: 20px; }
-        .product-card {
-            background: #fffae6;
-            border: 3px solid #7b4d27;
-            border-radius: 30px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.05s linear;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 8px;
-            box-shadow: 0 5px 0 #5a3f21;
-        }
-        .product-card:active { transform: translateY(5px); box-shadow: none; }
-        .product-image {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            background: #f0e0c0;
-            border-radius: 20px;
-            padding: 5px;
-        }
-        .product-name { font-size: 1rem; font-weight: bold; color: #3b2a17; }
-        .product-price { color: #1f8b4c; font-size: 1rem; font-weight: bold; }
-        
-        @media (max-width: 768px) {
-            .shop-layout { flex-direction: column; }
-            .cart-panel { order: -1; max-height: 200px; }
-            .product-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-            .product-image { width: 80px; height: 80px; }
-        }
-        @media (max-width: 480px) {
-            .product-image { width: 70px; height: 70px; }
-            .product-name { font-size: 0.8rem; }
-            .product-price { font-size: 0.8rem; }
-            .cart-item { font-size: 0.8rem; padding: 6px 8px; }
-        }
-
-        .simple-shop-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            width: 100%;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 15px;
-            background: #dbb88c;
-            border-radius: 40px;
-            border: 4px solid #9b6226;
-        }
-        .simple-item-card {
-            background: #fffae6;
-            border: 3px solid #7b4d27;
-            border-radius: 30px;
-            padding: 12px 8px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 8px;
-            box-shadow: 0 5px 0 #5a3f21;
-        }
-        .simple-item-card:active { transform: translateY(5px); box-shadow: none; }
-
-        #grinderSplashStartBtn {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
-            background: #fdd28c;
-            border: 4px solid #9b6226;
-            border-radius: 60px;
-            color: #2d1f0f;
-            font-weight: bold;
-            font-size: 2.2rem;
-            padding: 18px 50px;
-            box-shadow: 0 8px 0 #7b4d27, 0 12px 20px rgba(0,0,0,0.4);
-            cursor: pointer;
-            z-index: 20;
-            letter-spacing: 2px;
-        }
-        #grinderSplashStartBtn:active { transform: translateY(8px); box-shadow: 0 0 0 #7b4d27; }
-
-        .level-caption-overlay {
+        /* Overlay untuk menampilkan GIF pembuka */
+        .splash-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            background-color: #000;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: visibility 0s, opacity 0.3s;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            cursor: pointer;
         }
-        .level-caption-overlay.active { visibility: visible; opacity: 1; }
-        .caption-content {
-            position: relative;
-            width: 90%;
-            max-width: 600px;
+        .splash-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .splash-overlay img.active {
+            display: block;
+        }
+        .skip-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-family: monospace;
+            z-index: 1001;
+            pointer-events: none;
+        }
+        /* Konten utama (form) yang muncul setelah splash */
+        .main-content {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background-image: url('asset/BG1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
         }
-        .caption-image {
-            width: 100%;
-            border-radius: 30px;
-            border: 5px solid #ffd966;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .logo {
+            max-width: 300px;
+            width: 80%;
+            height: auto;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-in-out;
         }
-        .caption-start-btn {
-            margin-top: 30px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .input-name {
+            width: 100%;
+            max-width: 350px;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border: 4px solid #9b6226;
+            border-radius: 50px;
+            text-align: center;
+            background: #fff7e0;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+        .input-name:focus {
+            border-color: #d4a373;
+            box-shadow: 0 0 0 3px rgba(165, 107, 60, 0.3);
+        }
+        .btn-main {
             background: #fdd28c;
             border: 4px solid #9b6226;
-            border-radius: 60px;
+            border-radius: 50px;
             color: #2d1f0f;
             font-weight: bold;
-            font-size: 2rem;
+            font-size: 1.5rem;
             padding: 15px 40px;
             cursor: pointer;
-            box-shadow: 0 8px 0 #7b4d27;
-            display: inline-block;
+            box-shadow: 0 6px 0 #7b4d27, 0 10px 15px rgba(0,0,0,0.3);
+            transition: 0.05s linear;
+            border: none;
+            outline: none;
+            margin-top: 20px;
         }
-        .caption-start-btn:active { transform: translateY(8px); box-shadow: none; }
-
-        .modal-content {
-            background: #fff2d7;
-            border: 6px solid #a56b3c;
-            border-radius: 60px;
-            animation: popIn 0.3s ease-out;
+        .btn-main:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 #7b4d27, 0 5px 10px rgba(0,0,0,0.2);
         }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-header, .modal-footer { border: none; justify-content: center; }
-        .modal-body { text-align: center; font-size: 1.2rem; }
-        .status-message { background: #faf0cf; padding: 20px; border-radius: 40px; border: 3px solid #b57c48; }
-        .summary-text { text-align: center; font-size: 1.2rem; line-height: 1.5; }
-        .narasi { font-size: 1rem; background: #e7d6b5; padding: 10px 20px; border-radius: 30px; max-width: 90%; }
+        .btn-main:hover {
+            background: #fdd28c;
+            color: #2d1f0f;
+        }
+        /* Responsif */
+        @media (max-width: 768px) {
+            .logo {
+                max-width: 220px;
+                margin-bottom: 25px;
+            }
+            .input-name {
+                max-width: 280px;
+                font-size: 1rem;
+                padding: 12px 16px;
+            }
+            .btn-main {
+                font-size: 1.2rem;
+                padding: 12px 30px;
+                margin-top: 15px;
+            }
+        }
+        @media (max-width: 480px) {
+            .logo {
+                max-width: 180px;
+                margin-bottom: 20px;
+            }
+            .input-name {
+                max-width: 240px;
+                padding: 10px 12px;
+            }
+            .btn-main {
+                font-size: 1rem;
+                padding: 10px 25px;
+                margin-top: 12px;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="game-container" id="gameContainer">
-    <!-- Modal Konfirmasi Beli (tidak dipakai) -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Beli barang?</h5>
-                </div>
-                <div class="modal-body">
-                    <p id="confirmMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-custom" id="confirmYes">Ya</button>
-                    <button type="button" class="btn btn-custom" id="confirmNo" data-bs-dismiss="modal">Batal</button>
-                </div>
-            </div>
-        </div>
+    <!-- Overlay untuk splash GIF -->
+    <div id="splashOverlay" class="splash-overlay">
+        <img id="opening1" src="asset/opening1.gif" alt="Opening 1">
+        <img id="opening2" src="asset/opening2.gif" alt="Opening 2">
+        <div class="skip-hint">⚡ Klik untuk skip</div>
     </div>
 
-    <!-- Modal Iuran (Level 3) -->
-    <div class="modal fade" id="iuranModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">🧹 Iuran Kebersihan</h5>
-                </div>
-                <div class="modal-body">
-                    <p id="iuranMessage">Bayar Rp10.000?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-custom" id="iuranOk" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
+    <!-- Konten utama setelah splash -->
+    <div id="mainContent" class="main-content">
+        <img src="asset/logo.png" alt="Little Spender Logo" class="logo" 
+             onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'%3E%3Crect width=\'300\' height=\'200\' fill=\'%23fdd28c\'/%3E%3Ctext x=\'50\' y=\'120\' font-size=\'30\' fill=\'%239b6226\'%3ELittle Spender%3C/text%3E%3C/svg%3E';">
+        <input type="text" id="playerName" class="input-name" placeholder="Masukkan nama kamu" maxlength="20" value="">
+        <button id="playBtn" class="btn-main">Mainkan</button>
     </div>
 
-    <!-- Modal Hasil Level -->
-    <div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="resultTitle">Hasil Level</h5>
-                </div>
-                <div class="modal-body">
-                    <p id="resultMessage" class="status-message"></p>
-                </div>
-                <div class="modal-footer" id="resultButtons"></div>
-            </div>
-        </div>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const opening1 = document.getElementById('opening1');
+            const opening2 = document.getElementById('opening2');
+            const splashOverlay = document.getElementById('splashOverlay');
+            const mainContent = document.getElementById('mainContent');
 
-    <!-- Modal Sedekah -->
-    <div class="modal fade" id="sedekahModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">💰 Sedekah</h5>
-                </div>
-                <div class="modal-body">
-                    <p>Masukkan jumlah sedekah (maksimal <span id="maxSedekah"></span>):</p>
-                    <input type="number" id="sedekahInput" class="form-control" min="0" step="1000" value="0">
-                    <p class="mt-2" style="font-size:0.9rem; color:#555;">*Skor bertambah sebesar (jumlah sedekah / 1000).</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-custom" id="sedekahConfirm">Konfirmasi</button>
-                    <button type="button" class="btn btn-custom" id="sedekahCancel" data-bs-dismiss="modal">Batal</button>
-                </div>
-            </div>
-        </div>
-    </div>
+            let timeout1;
 
-    <!-- Modal Menabung -->
-    <div class="modal fade" id="menabungModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">💰 Menabung</h5>
-                </div>
-                <div class="modal-body">
-                    <p>Masukkan jumlah uang yang ingin ditabung (maksimal <span id="maxMenabung"></span>):</p>
-                    <input type="number" id="menabungInput" class="form-control" min="0" step="1000" value="0">
-                    <p class="mt-2" style="font-size:0.9rem; color:#555;">*Uang yang tidak ditabung akan hangus. Tidak ada tambahan skor.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-custom" id="menabungConfirm">Konfirmasi</button>
-                    <button type="button" class="btn btn-custom" id="menabungCancel" data-bs-dismiss="modal">Batal</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Ringkasan Akhir -->
-    <div class="modal fade" id="summaryModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">📊 Ringkasan Akhir</h5>
-                </div>
-                <div class="modal-body">
-                    <div id="summaryMessage" class="summary-text"></div>
-                    <p id="summaryScore" class="mt-3"></p>
-                    <p id="summaryMoney"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-custom" id="summaryOk" data-bs-dismiss="modal">Lanjut ke Menu</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Hasil Grinder -->
-    <div class="modal fade" id="grinderResultModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">🎉 Selamat!</h5>
-                </div>
-                <div class="modal-body">
-                    <p id="grinderResultMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-custom" id="grinderResultOk" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Overlay caption -->
-    <div id="levelCaptionOverlay" class="level-caption-overlay">
-        <div class="caption-content">
-            <img id="captionImage" class="caption-image" src="" alt="Caption">
-            <div id="captionStartBtn" class="caption-start-btn">Mulai Belanja</div>
-        </div>
-    </div>
-
-    <!-- MENU UTAMA -->
-    <div id="menuScreen" class="screen active">
-        <div id="newPlayerBtn" class="new-player-btn">🔄 Pemain Baru</div>
-        <div class="welcome-message" id="welcomeMessage">Halo, Pemain!</div>
-        <div class="money-box" id="menuMoney">Rp 0</div>
-        <div id="grinderCard" class="menu-card">
-            <img src="asset/koin.png" alt="Dapatkan Uang" class="menu-icon-img"
-                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\' viewBox=\'0 0 60 60\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'28\' fill=\'%23fdd28c\' stroke=\'%239b6226\' stroke-width=\'2\'/%3E%3Ctext x=\'30\' y=\'38\' text-anchor=\'middle\' font-size=\'24\' fill=\'%239b6226\'%3E💰%3C/text%3E%3C/svg%3E';">
-            <div class="menu-text">Dapatkan Uang</div>
-        </div>
-        <div id="shopCard" class="menu-card">
-            <img src="asset/keranjang.png" alt="Belanja" class="menu-icon-img"
-                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\' viewBox=\'0 0 60 60\'%3E%3Crect x=\'10\' y=\'20\' width=\'40\' height=\'30\' fill=\'%23fdd28c\' stroke=\'%239b6226\' stroke-width=\'2\'/%3E%3Ctext x=\'30\' y=\'38\' text-anchor=\'middle\' font-size=\'24\' fill=\'%239b6226\'%3E🛒%3C/text%3E%3C/svg%3E';">
-            <div class="menu-text">Belanja</div>
-        </div>
-        <div id="levelChoice" style="display: none; flex-direction: column; gap: 10px; width: 100%; align-items: center;">
-            <h3>Pilih Level Belanja:</h3>
-            <div class="d-flex gap-3">
-                <button class="btn btn-custom levelSelect" data-level="1">Level 1 (Bekal)</button>
-                <button class="btn btn-custom levelSelect" data-level="2" id="level2Btn">Level 2 (THR)</button>
-                <button class="btn btn-custom levelSelect" data-level="3" id="level3Btn">Level 3 (Festival)</button>
-            </div>
-            <button id="backFromLevelBtn" class="btn btn-custom">⬅ Kembali</button>
-        </div>
-    </div>
-
-    <!-- GRINDER SCREEN -->
-    <div id="grinderScreen" class="screen">
-        <button id="grinderSplashStartBtn">Mulai</button>
-        <div id="grinderGameArea" style="display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: flex-start; gap: 15px;">
-            <div class="game-stats-container">
-                <div class="left-stats">
-                    <div class="timer-box" id="timerDisplay">30s</div>
-                    <div class="money-box" id="grinderMoney">Rp 0</div>
-                </div>
-                <div class="right-stats">
-                    <div class="stats-item"><img src="asset/du_rumput.png" alt="Rumput"><span id="grassCount">0</span></div>
-                    <div class="stats-item"><img src="asset/du_botol.png" alt="Botol"><span id="bottleCount">0</span></div>
-                </div>
-            </div>
-            <div id="gamePlayArea" class="game-play-area"></div>
-        </div>
-        <button id="backFromGrinderBtn" class="btn btn-custom" style="display: none;">Selesai & Kembali</button>
-    </div>
-
-    <!-- BELANJA SCREEN -->
-    <div id="belanjaScreen" class="screen">
-        <div id="narasiLevel" class="narasi"></div>
-        <h2 id="levelTitle">Level Belanja</h2>
-        <div class="money-box" id="shopMoney">Rp 0</div>
-        <div id="shopDynamicContainer" style="width:100%; flex:1; min-height:0;"></div>
-        <div class="d-flex gap-3">
-            <button id="finishShoppingBtn" class="btn btn-custom">✅ Selesai Belanja</button>
-            <button id="backFromShopBtn" class="btn btn-custom">⬅ Kembali</button>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // ======================== AMBIL NAMA ========================
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
-    let playerName = getQueryParam('name');
-    if (!playerName) window.location.replace('index.html');
-    else playerName = decodeURIComponent(playerName);
-
-    // ======================== GLOBAL STATE ========================
-    let currentMoney = 0;
-    let totalScore = 0;
-    let inventory = []; // array of { name, price }
-    let currentLevel = null;
-    let levelInitialMoney = 0;
-    let iuranPaid = false;
-    let purchaseCount = 0;
-    let iuranTriggered = false;
-    let level1Done = false;
-    let level2Done = false;
-    let lastLevelScore = 0;
-    let activeAudios = [];
-
-    const itemsData = {
-        1: [
-            { name: "Air Mineral", price: 3000, type: "need", image: "lv1_airminum.png" },
-            { name: "Sandwich Sehat", price: 5000, type: "need", image: "lv1_sandwich.png" },
-            { name: "Soda", price: 3000, type: "want", image: "lv1_soda.png" },
-            { name: "Snack Chips", price: 5000, type: "want", image: "lv1_snack.png" }
-        ],
-        2: [
-            { name: "Buku Tulis (5pcs)", price: 20000, type: "need", image: "lv2_bukutulis.png" },
-            { name: "Pensil & Penghapus", price: 5000, type: "need", image: "lv2_pensilpenghapus.png" },
-            { name: "Penggaris", price: 5000, type: "need", image: "lv2_penggaris.png" },
-            { name: "Kotak Pensil", price: 15000, type: "need", image: "lv2_kotakpensil.png" },
-            { name: "Buku Komik", price: 10000, type: "want", image: "lv2_komik.png" },
-            { name: "Mobil Mainan", price: 30000, type: "want", image: "lv2_mobil.png" },
-            { name: "Stiker Lucu", price: 5000, type: "want", image: "lv2_stikerlucu.png" },
-            { name: "Boneka Kecil", price: 30000, type: "want", image: "lv2_boneka.png" }
-        ],
-        3: [
-            { name: "Sepatu Std", price: 70000, type: "need", emoji: "👟" },
-            { name: "Botol Biasa", price: 15000, type: "need", emoji: "🧴" },
-            { name: "Kaos Polos", price: 30000, type: "need", emoji: "👕" },
-            { name: "Roti/Pisang", price: 10000, type: "need", emoji: "🍌" },
-            { name: "Sepatu Brand", price: 130000, type: "want", emoji: "👞" },
-            { name: "Botol Viral", price: 45000, type: "want", emoji: "🧊" },
-            { name: "Kaos Gold", price: 60000, type: "want", emoji: "✨" },
-            { name: "Snack Impor", price: 35000, type: "want", emoji: "🍫" }
-        ]
-    };
-    const narasi = { 1: "Bekal Harian: Pilih nutrisi terbaikmu!", 2: "Berkah THR: Siapkan alat tulis naik kelas!", 3: "Festival Sekolah: Pilih perlengkapan lomba!" };
-
-    function playSound(freq, duration) {
-        try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.frequency.value = freq;
-            gain.gain.value = 0.1;
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        } catch(e) {}
-    }
-    function stopAllSounds() { activeAudios.forEach(a => { if(a && typeof a.pause==='function') { a.pause(); a.currentTime=0; } }); activeAudios = []; }
-    function playAssetSound(filename) {
-        stopAllSounds();
-        try {
-            const audio = new Audio(`asset/${filename}`);
-            activeAudios.push(audio);
-            audio.play().catch(e=>console.log);
-            audio.onended = () => { const idx = activeAudios.indexOf(audio); if(idx>-1) activeAudios.splice(idx,1); };
-        } catch(e) {}
-    }
-    function setBodyBackground(url) { document.body.style.backgroundImage = `url('${url}')`; document.body.style.backgroundColor = ''; }
-    function switchScreen(screenId) {
-        stopAllSounds();
-        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-        if(screenId === 'grinderScreen') setBodyBackground('asset/bg_dub2.gif');
-        else if(screenId !== 'belanjaScreen') setBodyBackground('asset/bg_dub.gif');
-        if(screenId === 'menuScreen') {
-            document.getElementById('menuMoney').innerText = `Rp ${currentMoney.toLocaleString()}`;
-            document.getElementById('welcomeMessage').innerText = `Halo, ${playerName}!`;
-        }
-    }
-    function showBSModal(modalId) { stopAllSounds(); new bootstrap.Modal(document.getElementById(modalId)).show(); }
-    function hideBSModal(modalId) { bootstrap.Modal.getInstance(document.getElementById(modalId))?.hide(); }
-
-    // ======================== TAMPILAN BELANJA ========================
-    function updateShopDisplay() {
-        document.getElementById('shopMoney').innerText = `Rp ${currentMoney.toLocaleString()}`;
-        const container = document.getElementById('shopDynamicContainer');
-        container.innerHTML = '';
-        if (!currentLevel) return;
-        if (currentLevel === 1 || currentLevel === 2) {
-            const layout = document.createElement('div');
-            layout.className = 'shop-layout';
-            const productGrid = document.createElement('div');
-            productGrid.className = 'product-grid';
-            itemsData[currentLevel].forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                const img = document.createElement('img');
-                img.src = `asset/${item.image}`;
-                img.className = 'product-image';
-                img.alt = item.name;
-                img.onerror = function() { this.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Crect width=\'80\' height=\'80\' fill=\'%23ccc\'/%3E%3Ctext x=\'40\' y=\'45\' text-anchor=\'middle\' font-size=\'12\'%3E?%3C/text%3E%3C/svg%3E'; };
-                const nameSpan = document.createElement('div'); nameSpan.className = 'product-name'; nameSpan.innerText = item.name;
-                const priceSpan = document.createElement('div'); priceSpan.className = 'product-price'; priceSpan.innerText = `Rp ${item.price.toLocaleString()}`;
-                card.appendChild(img); card.appendChild(nameSpan); card.appendChild(priceSpan);
-                card.addEventListener('click', () => buyItemDirect(item));
-                productGrid.appendChild(card);
-            });
-            const cartPanel = document.createElement('div');
-            cartPanel.className = 'cart-panel';
-            cartPanel.innerHTML = `<div class="cart-title">🛒 Keranjang Belanja</div><div id="cartItemsList" class="cart-items"></div>`;
-            layout.appendChild(productGrid);
-            layout.appendChild(cartPanel);
-            container.appendChild(layout);
-            updateCartDisplay();
-        } else {
-            const simpleGrid = document.createElement('div');
-            simpleGrid.className = 'simple-shop-grid';
-            itemsData[currentLevel].forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'simple-item-card';
-                card.innerHTML = `<div style="font-size:2.5rem;">${item.emoji}</div><div class="product-name">${item.name}</div><div class="product-price">Rp ${item.price.toLocaleString()}</div>`;
-                card.addEventListener('click', () => buyItemDirect(item));
-                simpleGrid.appendChild(card);
-            });
-            container.appendChild(simpleGrid);
-        }
-    }
-
-    function updateCartDisplay() {
-        const cartContainer = document.getElementById('cartItemsList');
-        if (!cartContainer) return;
-        if (inventory.length === 0) {
-            cartContainer.innerHTML = '<div class="cart-empty">Belum ada barang</div>';
-            return;
-        }
-        cartContainer.innerHTML = '';
-        inventory.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'cart-item';
-            div.innerHTML = `<span class="cart-item-name">${item.name}</span><span class="cart-item-price">Rp ${item.price.toLocaleString()}</span>`;
-            cartContainer.appendChild(div);
-        });
-    }
-
-    function buyItemDirect(item) {
-        if (currentMoney >= item.price) {
-            currentMoney -= item.price;
-            inventory.push({ name: item.name, price: item.price });
-            purchaseCount++;
-            playSound(600, 0.1);
-            if (currentLevel === 3 && !iuranTriggered && purchaseCount >= 2) triggerIuran();
-            updateShopDisplay();
-        } else {
-            alert("Uang tidak cukup!");
-        }
-    }
-
-    function triggerIuran() {
-        iuranTriggered = true;
-        if (currentMoney >= 10000) {
-            currentMoney -= 10000;
-            iuranPaid = true;
-            document.getElementById('iuranMessage').innerText = 'Iuran Rp10.000 berhasil dibayar.';
-            playSound(700, 0.2);
-            playAssetSound('iuran_berhasil.mp3');
-        } else {
-            iuranPaid = false;
-            document.getElementById('iuranMessage').innerText = 'Yah, uangmu tidak cukup untuk membayar uang kas.';
-            playSound(300, 0.3);
-            playAssetSound('iuran_gagal.mp3');
-        }
-        showBSModal('iuranModal');
-        updateShopDisplay();
-    }
-    document.getElementById('iuranOk').addEventListener('click', () => hideBSModal('iuranModal'));
-
-    function initLevel(level) {
-        stopAllSounds();
-        currentLevel = level;
-        inventory = [];
-        iuranPaid = false;
-        purchaseCount = 0;
-        iuranTriggered = false;
-        let modalDasar = level === 1 ? 10000 : level === 2 ? 100000 : 150000;
-        currentMoney = modalDasar + currentMoney;
-        levelInitialMoney = currentMoney;
-        document.getElementById('narasiLevel').innerText = narasi[level];
-        playAssetSound(`narasi${level}.mp3`);
-        updateShopDisplay();
-    }
-
-    function checkScoring() {
-        const needs = itemsData[currentLevel].filter(i => i.type === 'need').map(i => i.name);
-        const boughtNeeds = inventory.filter(i => needs.includes(i.name)).map(i => i.name);
-        if (!needs.every(n => boughtNeeds.includes(n))) {
-            return { success: false, score: 0, message: "Kebutuhan utamamu belum terpenuhi! Coba pikirkan kembali prioritasmu." };
-        }
-        let score = boughtNeeds.length * 50 + Math.floor(currentMoney / 1000);
-        if (currentLevel === 3 && !iuranPaid) score -= 30;
-        return { success: true, score, message: `Skor level ini: ${score}` };
-    }
-
-    document.getElementById('finishShoppingBtn').addEventListener('click', () => {
-        stopAllSounds();
-        const result = checkScoring();
-        if (!result.success) {
-            document.getElementById('resultTitle').innerText = '😵 GAGAL';
-            document.getElementById('resultMessage').innerText = result.message;
-            document.getElementById('resultButtons').innerHTML = `<button id="retryLevelBtn" class="btn btn-custom">Ulangi Level</button><button id="backToMenuBtn" class="btn btn-custom">Kembali ke Menu</button>`;
-            showBSModal('resultModal');
-            playSound(400,0.3); playAssetSound('gagal.mp3');
-        } else {
-            lastLevelScore = result.score;
-            document.getElementById('resultTitle').innerText = '🎉 BERHASIL';
-            document.getElementById('resultMessage').innerHTML = result.message + '<br>Pilih aksi selanjutnya:';
-            document.getElementById('resultButtons').innerHTML = `<button id="sedekahChoiceBtn" class="btn btn-custom">Sedekah</button><button id="menabungChoiceBtn" class="btn btn-custom">Menabung</button>`;
-            showBSModal('resultModal');
-            playSound(800,0.2); playAssetSound('berhasil.mp3');
-        }
-    });
-
-    document.addEventListener('click', (e) => {
-        if (e.target.id === 'retryLevelBtn') {
-            hideBSModal('resultModal');
-            currentMoney = levelInitialMoney;
-            inventory = [];
-            purchaseCount = iuranTriggered = iuranPaid = false;
-            updateShopDisplay();
-        } else if (e.target.id === 'backToMenuBtn') {
-            hideBSModal('resultModal');
-            switchScreen('menuScreen');
-        } else if (e.target.id === 'sedekahChoiceBtn') {
-            hideBSModal('resultModal');
-            document.getElementById('maxSedekah').innerText = `Rp ${currentMoney.toLocaleString()}`;
-            document.getElementById('sedekahInput').value = 0;
-            document.getElementById('sedekahInput').max = currentMoney;
-            showBSModal('sedekahModal');
-        } else if (e.target.id === 'menabungChoiceBtn') {
-            hideBSModal('resultModal');
-            document.getElementById('maxMenabung').innerText = `Rp ${currentMoney.toLocaleString()}`;
-            document.getElementById('menabungInput').value = 0;
-            document.getElementById('menabungInput').max = currentMoney;
-            showBSModal('menabungModal');
-        }
-    });
-
-    document.getElementById('sedekahConfirm').addEventListener('click', () => {
-        let jumlah = parseInt(document.getElementById('sedekahInput').value,10) || 0;
-        if(jumlah > currentMoney) { alert('Jumlah melebihi uang!'); return; }
-        if(currentLevel===1) level1Done=true;
-        if(currentLevel===2) level2Done=true;
-        const bonus = Math.floor(jumlah/1000);
-        totalScore += lastLevelScore + bonus;
-        currentMoney -= jumlah;
-        hideBSModal('sedekahModal');
-        playSound(900,0.3); playAssetSound('sedekah.mp3');
-        showSummary(totalScore, currentMoney);
-    });
-    document.getElementById('sedekahCancel').addEventListener('click', () => { hideBSModal('sedekahModal'); switchScreen('menuScreen'); });
-    document.getElementById('menabungConfirm').addEventListener('click', () => {
-        let jumlah = parseInt(document.getElementById('menabungInput').value,10) || 0;
-        if(jumlah > currentMoney) { alert('Jumlah melebihi uang!'); return; }
-        if(currentLevel===1) level1Done=true;
-        if(currentLevel===2) level2Done=true;
-        currentMoney = jumlah;
-        totalScore += lastLevelScore;
-        hideBSModal('menabungModal');
-        playSound(650,0.15); playAssetSound('menabung.mp3');
-        showSummary(totalScore, currentMoney);
-    });
-    document.getElementById('menabungCancel').addEventListener('click', () => { hideBSModal('menabungModal'); switchScreen('menuScreen'); });
-
-    function showSummary(finalScore, finalMoney) {
-        let pesan = "";
-        const skorTinggi = finalScore > 150;
-        const uangBanyak = finalMoney > 75000;
-        if (!skorTinggi && !uangBanyak) pesan = "Semangat! Lain kali lebih hemat dan dermawan ya!";
-        else if (skorTinggi && !uangBanyak) pesan = "Wow, kamu dermawan! Terima kasih sudah berbagi.";
-        else if (!skorTinggi && uangBanyak) pesan = "Kamu pandai mengelola uang, tapi coba tingkatkan kedermawanan.";
-        else pesan = "Luar biasa! Kamu berhasil mengelola keuangan dengan bijak dan dermawan.";
-        document.getElementById('summaryMessage').innerText = pesan;
-        document.getElementById('summaryScore').innerText = `Total skor: ${finalScore}`;
-        document.getElementById('summaryMoney').innerText = `Sisa uang: Rp ${finalMoney.toLocaleString()}`;
-        showBSModal('summaryModal');
-        playAssetSound('ringkasan.mp3');
-    }
-    document.getElementById('summaryOk').addEventListener('click', () => { hideBSModal('summaryModal'); switchScreen('menuScreen'); });
-
-    // ======================== GRINDER ========================
-    let grinderInterval, spawnInterval, timer = 30;
-    let grass = 0, bottle = 0, grinderEarn = 0;
-    function resetGrinderToSplash() {
-        if(grinderInterval) clearInterval(grinderInterval);
-        if(spawnInterval) clearInterval(spawnInterval);
-        document.getElementById('grinderGameArea').style.display = 'none';
-        document.getElementById('backFromGrinderBtn').style.display = 'none';
-        document.getElementById('grinderSplashStartBtn').style.display = 'inline-block';
-        const area = document.getElementById('gamePlayArea');
-        if(area) area.innerHTML = '';
-        timer=30; grass=bottle=grinderEarn=0;
-        document.getElementById('timerDisplay').innerText='30s';
-        document.getElementById('grassCount').innerText='0';
-        document.getElementById('bottleCount').innerText='0';
-        document.getElementById('grinderMoney').innerText = `Rp ${currentMoney.toLocaleString()}`;
-    }
-    function startGrinderGame() {
-        setBodyBackground('asset/bg_dub3.gif');
-        document.getElementById('grinderSplashStartBtn').style.display = 'none';
-        document.getElementById('grinderGameArea').style.display = 'flex';
-        document.getElementById('backFromGrinderBtn').style.display = 'inline-block';
-        timer=30; grass=bottle=grinderEarn=0;
-        document.getElementById('grinderMoney').innerText = `Rp ${currentMoney.toLocaleString()}`;
-        document.getElementById('timerDisplay').innerText='30s';
-        document.getElementById('grassCount').innerText='0';
-        document.getElementById('bottleCount').innerText='0';
-        const area = document.getElementById('gamePlayArea');
-        area.innerHTML = '';
-        grinderInterval = setInterval(() => { timer--; document.getElementById('timerDisplay').innerText = timer+'s'; if(timer<=0) endGrinder(); }, 1000);
-        spawnInterval = setInterval(() => { if(timer>0) spawnObject(); }, 1000);
-        spawnObject();
-    }
-    function spawnObject() {
-        const area = document.getElementById('gamePlayArea');
-        if(!area) return;
-        const obj = document.createElement('div');
-        const type = Math.random()<0.6 ? 'grass' : 'bottle';
-        obj.className = `object ${type}`;
-        const maxX = area.clientWidth - 90;
-        const maxY = area.clientHeight - 90;
-        if(maxX<=0 || maxY<=0) return;
-        obj.style.left = Math.random()*maxX + 'px';
-        obj.style.top = Math.random()*maxY + 'px';
-        obj.addEventListener('click', (e) => {
-            e.stopPropagation();
-            let value = type==='grass' ? 500 : 1000;
-            currentMoney += value;
-            grinderEarn += value;
-            if(type==='grass') grass++; else bottle++;
-            document.getElementById('grinderMoney').innerText = `Rp ${currentMoney.toLocaleString()}`;
-            document.getElementById('grassCount').innerText = grass;
-            document.getElementById('bottleCount').innerText = bottle;
-            playSound(type==='grass'?550:660,0.1);
-            const coin = document.createElement('div');
-            coin.className = 'coin-animation';
-            coin.innerText = `+Rp ${value}`;
-            const rect = area.getBoundingClientRect();
-            coin.style.left = (e.clientX - rect.left)+'px';
-            coin.style.top = (e.clientY - rect.top)+'px';
-            area.appendChild(coin);
-            setTimeout(()=>coin.remove(),800);
-            obj.remove();
-        });
-        area.appendChild(obj);
-    }
-    function endGrinder() {
-        clearInterval(grinderInterval);
-        clearInterval(spawnInterval);
-        document.getElementById('gamePlayArea').innerHTML = '';
-        let msg = `Kamu berhasil mencabut ${grass} rumput (Rp ${grass*500}) dan mengumpulkan ${bottle} botol (Rp ${bottle*1000}). Total tambahan: Rp ${grinderEarn}. Wah kamu berhasil menghasilkan uang sendiri. Yuk kita mulai berbelanja kebutuhanmu!`;
-        document.getElementById('grinderResultMessage').innerHTML = msg.replace(/\. /g, '.<br>');
-        showBSModal('grinderResultModal');
-        playSound(1000,0.2); playAssetSound('grinder_selesai.mp3');
-    }
-    document.getElementById('grinderSplashStartBtn').addEventListener('click', startGrinderGame);
-    document.getElementById('grinderResultOk').addEventListener('click', () => { hideBSModal('grinderResultModal'); switchScreen('menuScreen'); document.getElementById('menuMoney').innerText = `Rp ${currentMoney.toLocaleString()}`; });
-    document.getElementById('backFromGrinderBtn').addEventListener('click', () => { clearInterval(grinderInterval); clearInterval(spawnInterval); endGrinder(); });
-
-    // ======================== MENU ========================
-    document.getElementById('grinderCard').addEventListener('click', () => { stopAllSounds(); switchScreen('grinderScreen'); });
-    document.getElementById('shopCard').addEventListener('click', () => {
-        stopAllSounds();
-        document.getElementById('grinderCard').style.display = 'none';
-        document.getElementById('shopCard').style.display = 'none';
-        document.getElementById('levelChoice').style.display = 'flex';
-        document.getElementById('level2Btn').disabled = !level1Done;
-        document.getElementById('level3Btn').disabled = !level2Done;
-    });
-    document.getElementById('backFromLevelBtn').addEventListener('click', () => {
-        stopAllSounds();
-        document.getElementById('levelChoice').style.display = 'none';
-        document.getElementById('grinderCard').style.display = 'flex';
-        document.getElementById('shopCard').style.display = 'flex';
-    });
-    let pendingLevel = null;
-    document.querySelectorAll('.levelSelect').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            stopAllSounds();
-            const level = parseInt(e.target.dataset.level);
-            if(level===2 && !level1Done) { alert('Selesaikan Level 1 terlebih dahulu!'); return; }
-            if(level===3 && !level2Done) { alert('Selesaikan Level 2 terlebih dahulu!'); return; }
-            if(level===1 || level===2) {
-                document.getElementById('captionImage').src = level===1 ? 'asset/bg_caption_lv1.gif' : 'asset/bg_caption_lv2.gif';
-                document.getElementById('levelCaptionOverlay').classList.add('active');
-                pendingLevel = level;
-            } else {
-                setBodyBackground('asset/bg_level123.gif');
-                initLevel(3);
-                switchScreen('belanjaScreen');
-                document.getElementById('levelTitle').innerText = `Level 3 - Festival Sekolah`;
+            function finishSplash() {
+                if (timeout1) clearTimeout(timeout1);
+                splashOverlay.style.display = 'none';
+                mainContent.style.display = 'flex';
+                document.body.style.background = 'none';
             }
-            document.getElementById('levelChoice').style.display = 'none';
-            document.getElementById('grinderCard').style.display = 'flex';
-            document.getElementById('shopCard').style.display = 'flex';
-        });
-    });
-    document.getElementById('captionStartBtn').addEventListener('click', () => {
-        document.getElementById('levelCaptionOverlay').classList.remove('active');
-        if(pendingLevel) {
-            setBodyBackground('asset/bg_level123.gif');
-            initLevel(pendingLevel);
-            switchScreen('belanjaScreen');
-            document.getElementById('levelTitle').innerText = `Level ${pendingLevel} - ${pendingLevel===1?'Bekal Harian':'Berkah THR'}`;
-            pendingLevel = null;
-        }
-    });
-    document.getElementById('backFromShopBtn').addEventListener('click', () => {
-        stopAllSounds();
-        switchScreen('menuScreen');
-        document.getElementById('menuMoney').innerText = `Rp ${currentMoney.toLocaleString()}`;
-        document.getElementById('grinderCard').style.display = 'flex';
-        document.getElementById('shopCard').style.display = 'flex';
-        document.getElementById('levelChoice').style.display = 'none';
-    });
-    document.getElementById('newPlayerBtn').addEventListener('click', () => { stopAllSounds(); window.location.href = 'index.html'; });
 
-    setBodyBackground('asset/bg_dub.gif');
-    document.getElementById('menuMoney').innerText = `Rp ${currentMoney.toLocaleString()}`;
-    document.getElementById('welcomeMessage').innerText = `Halo, ${playerName}!`;
-</script>
+            // Tampilkan opening1 selama 3 detik
+            opening1.classList.add('active');
+            timeout1 = setTimeout(() => {
+                opening1.classList.remove('active');
+                opening2.classList.add('active');
+                // Tidak ada timeout lagi – user harus klik untuk melanjutkan
+            }, 3000);
+
+            // Klik pada overlay akan langsung menyelesaikan splash
+            splashOverlay.addEventListener('click', function(e) {
+                finishSplash();
+            });
+
+            // Jika opening1 gagal dimuat, langsung tampilkan opening2 dan tunggu klik
+            opening1.onerror = () => {
+                if (timeout1) clearTimeout(timeout1);
+                opening1.classList.remove('active');
+                opening2.classList.add('active');
+            };
+            // Jika opening2 gagal dimuat, langsung selesaikan splash
+            opening2.onerror = () => {
+                finishSplash();
+            };
+
+            // Tombol mainkan
+            document.getElementById('playBtn').addEventListener('click', function() {
+                let name = document.getElementById('playerName').value.trim();
+                if (name === '') name = 'Spender';
+                window.location.href = 'game.html?name=' + encodeURIComponent(name);
+            });
+        });
+    </script>
 </body>
 </html>
